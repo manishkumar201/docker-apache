@@ -1,0 +1,22 @@
+pipeline {
+    agent any
+    
+    
+    stages {
+        stage('removing old build')
+        {
+            steps
+            {
+                sh 'docker image rm -f officialmanishkr98/apache-web:latest'
+            }
+        }
+        stage('cloning and deploying the project') 
+        {
+            steps 
+            {
+                sh 'docker run -d -p 80:80 --name apache-web officialmanishkr98/apache-web:latest'
+            }
+        }
+    }
+}
+

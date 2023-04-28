@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+    environment
+    {
+        DOCKERHUB_CRED = credentials('dockerCred')
+    }
+
+    stages {
+        stage('cloning the project') 
+        {
+            steps 
+            {
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/manishkumar201/docker-apache.git']])
+            }
+        }
+        stage('Building the image out of Dockerfile')
+        {
+            steps
+            {
+                sh 'docker build -t officialmanishkr98/apache-web:latest .'
+            }
+        }
+        stage('loging in to dockerhub')
+        {
+            steps
+            {
+                sh 'echo $DOCKERHUB_CRED_PSW | docker login -u $DOCKERHUB_CRED_USR --password-stdin'
+            }
+        }
+        stage('pushing image to dockerhub') 
+      {
+          steps
+          {
+              sh 'docker push officialmanishkr98/apache-web:latest'
+          }
+      }
+    }
+}
+
